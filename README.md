@@ -72,6 +72,26 @@ npm run build
 npm run preview
 ```
 
+## 🌐 Deploy to GitHub Pages
+
+### Automatic Deployment (Recommended)
+This repo includes a GitHub Actions workflow that automatically deploys to GitHub Pages on every push to `main`.
+
+1. Go to your repo **Settings** → **Pages**
+2. Under "Build and deployment", select **GitHub Actions** as the source
+3. Push to `main` branch — the site will deploy automatically!
+
+### Manual Deployment
+```bash
+# Install gh-pages if needed
+npm install gh-pages --save-dev
+
+# Build and deploy
+npm run deploy
+```
+
+Your site will be live at: `https://<username>.github.io/<repo-name>/`
+
 ## 🛠️ Tech Stack
 
 - **React 18** - UI Framework

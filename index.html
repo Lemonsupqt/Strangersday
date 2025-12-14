@@ -11,6 +11,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Handle SPA redirect from 404.html for GitHub Pages -->
+    <script>
+      (function(){
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

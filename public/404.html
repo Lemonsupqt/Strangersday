@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Upside Down Gaming | Redirecting...</title>
+    <script>
+      // Single Page App redirect for GitHub Pages
+      // Redirects 404s to index.html with the path stored in sessionStorage
+      sessionStorage.redirect = location.href;
+      location.replace(location.pathname.split('/').slice(0, -1).join('/') || '/');
+    </script>
+    <style>
+      body {
+        background: #0a0a0f;
+        color: #e8e8e8;
+        font-family: system-ui, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .loader {
+        text-align: center;
+      }
+      .spinner {
+        font-size: 3rem;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader">
+      <div class="spinner">🌀</div>
+      <p>Entering the Upside Down...</p>
+    </div>
+  </body>
+</html>
