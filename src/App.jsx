@@ -1,52 +1,74 @@
 import React, { useState, useEffect } from 'react'
-import Header from './components/Header'
-import Hero from './components/Hero'
-import FriendPortal from './components/FriendPortal'
-import GameLibrary from './components/GameLibrary'
-import GameNightScheduler from './components/GameNightScheduler'
-import ChatPortal from './components/ChatPortal'
-import Achievements from './components/Achievements'
-import Footer from './components/Footer'
+import { GameProvider, useGame } from './context/GameContext'
+import ConnectionScreen from './screens/ConnectionScreen'
+import LobbyScreen from './screens/LobbyScreen'
+import GameSelectScreen from './screens/GameSelectScreen'
+import MindMeld from './games/MindMeld'
+import UpsideDownDraw from './games/UpsideDownDraw'
+import VoidMemory from './games/VoidMemory'
+import StrangerSync from './games/StrangerSync'
+import TelekinesisPong from './games/TelekinesisPong'
 import ParticleBackground from './components/ParticleBackground'
 
-function App() {
-  const [activeSection, setActiveSection] = useState('home')
-  const [showChat, setShowChat] = useState(false)
+const GAMES = {
+  'mind-meld': MindMeld,
+  'upside-down-draw': UpsideDownDraw,
+  'void-memory': VoidMemory,
+  'stranger-sync': StrangerSync,
+  'telekinesis-pong': TelekinesisPong
+}
+
+function GameApp() {
+  const { isConnected, currentGame, playerName } = useGame()
+  const [screen, setScreen] = useState('connection')
+
+  useEffect(() => {
+    if (!playerName) {
+      setScreen('connection')
+    } else if (!isConnected) {
+      setScreen('lobby')
+    } else if (currentGame) {
+      setScreen('game')
+    } else {
+      setScreen('select')
+    }
+  }, [isConnected, currentGame, playerName])
+
+  const GameComponent = currentGame ? GAMES[currentGame] : null
 
   return (
-    <div className="bg-upside-down min-h-screen relative">
+    <div className="app-container">
       <ParticleBackground />
       
-      <Header activeSection={activeSection} setActiveSection={setActiveSection} />
-      
-      <main>
-        <Hero />
-        <FriendPortal />
-        <GameLibrary />
-        <GameNightScheduler />
-        <Achievements />
+      {/* Stranger Things Logo */}
+      <div className="stranger-logo">
+        <h1 className="logo-text">
+          <span className="logo-stranger">STRANGER</span>
+          <span className="logo-games">GAMES</span>
+        </h1>
+        <p className="logo-subtitle">The Upside Down of Gaming</p>
+      </div>
+
+      <main className="main-content">
+        {screen === 'connection' && <ConnectionScreen onComplete={() => setScreen('lobby')} />}
+        {screen === 'lobby' && <LobbyScreen />}
+        {screen === 'select' && <GameSelectScreen />}
+        {screen === 'game' && GameComponent && <GameComponent />}
       </main>
 
-      {/* Floating Chat Button */}
-      <button 
-        onClick={() => setShowChat(!showChat)}
-        className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full bg-gradient-to-br from-demogorgon-red to-wednesday-purple flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-        style={{
-          background: 'linear-gradient(135deg, #ff0844, #7b2cbf)',
-          boxShadow: '0 0 30px rgba(255, 8, 68, 0.5)'
-        }}
-        aria-label="Open chat"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-        </svg>
-        <span className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center text-xs font-bold animate-pulse">3</span>
-      </button>
-
-      {showChat && <ChatPortal onClose={() => setShowChat(false)} />}
-
-      <Footer />
+      {/* Floating orbs decoration */}
+      <div className="floating-orb orb-1"></div>
+      <div className="floating-orb orb-2"></div>
+      <div className="floating-orb orb-3"></div>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <GameProvider>
+      <GameApp />
+    </GameProvider>
   )
 }
 

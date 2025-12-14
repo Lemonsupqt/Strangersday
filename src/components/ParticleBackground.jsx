@@ -6,7 +6,7 @@ const ParticleBackground = () => {
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
-    let animationFrameId
+    let animationId
     let particles = []
 
     const resize = () => {
@@ -21,14 +21,14 @@ const ParticleBackground = () => {
 
       reset() {
         this.x = Math.random() * canvas.width
-        this.y = canvas.height + 10
+        this.y = Math.random() * canvas.height
         this.size = Math.random() * 3 + 1
-        this.speedY = Math.random() * 0.5 + 0.2
-        this.speedX = (Math.random() - 0.5) * 0.3
+        this.speedX = (Math.random() - 0.5) * 0.5
+        this.speedY = (Math.random() - 0.5) * 0.5
         this.opacity = Math.random() * 0.5 + 0.2
         this.color = this.getRandomColor()
-        this.rotation = 0
-        this.rotationSpeed = (Math.random() - 0.5) * 0.02
+        this.pulse = Math.random() * Math.PI * 2
+        this.pulseSpeed = Math.random() * 0.02 + 0.01
       }
 
       getRandomColor() {
@@ -37,80 +37,107 @@ const ParticleBackground = () => {
           'rgba(123, 44, 191, ',  // Wednesday purple
           'rgba(0, 212, 255, ',   // Neon blue
           'rgba(255, 107, 157, ', // Eleven pink
+          'rgba(32, 227, 178, '   // Thing teal
         ]
         return colors[Math.floor(Math.random() * colors.length)]
       }
 
       update() {
-        this.y -= this.speedY
-        this.x += this.speedX + Math.sin(this.y * 0.01) * 0.2
-        this.rotation += this.rotationSpeed
-        
-        if (this.y < -10) {
-          this.reset()
-        }
+        this.x += this.speedX
+        this.y += this.speedY
+        this.pulse += this.pulseSpeed
+
+        // Wrap around screen
+        if (this.x < 0) this.x = canvas.width
+        if (this.x > canvas.width) this.x = 0
+        if (this.y < 0) this.y = canvas.height
+        if (this.y > canvas.height) this.y = 0
       }
 
       draw() {
-        ctx.save()
-        ctx.translate(this.x, this.y)
-        ctx.rotate(this.rotation)
-        ctx.globalAlpha = this.opacity
-        ctx.fillStyle = this.color + this.opacity + ')'
-        ctx.shadowBlur = 10
-        ctx.shadowColor = this.color + '1)'
-        
-        // Draw a small cross/plus shape for some particles
-        if (this.size > 2) {
-          ctx.fillRect(-this.size/4, -this.size, this.size/2, this.size * 2)
-          ctx.fillRect(-this.size, -this.size/4, this.size * 2, this.size/2)
-        } else {
-          ctx.beginPath()
-          ctx.arc(0, 0, this.size, 0, Math.PI * 2)
-          ctx.fill()
-        }
-        
-        ctx.restore()
+        const pulseOpacity = this.opacity * (0.5 + Math.sin(this.pulse) * 0.5)
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2)
+        ctx.fillStyle = this.color + pulseOpacity + ')'
+        ctx.fill()
+
+        // Glow effect
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2)
+        ctx.fillStyle = this.color + (pulseOpacity * 0.3) + ')'
+        ctx.fill()
       }
     }
 
     const init = () => {
-      resize()
       particles = []
-      for (let i = 0; i < 50; i++) {
-        const p = new Particle()
-        p.y = Math.random() * canvas.height // Spread initial particles
-        particles.push(p)
+      const particleCount = Math.min((canvas.width * canvas.height) / 15000, 100)
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new Particle())
+      }
+    }
+
+    const drawConnections = () => {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x
+          const dy = particles[i].y - particles[j].y
+          const distance = Math.sqrt(dx * dx + dy * dy)
+
+          if (distance < 150) {
+            const opacity = (1 - distance / 150) * 0.15
+            ctx.beginPath()
+            ctx.moveTo(particles[i].x, particles[i].y)
+            ctx.lineTo(particles[j].x, particles[j].y)
+            ctx.strokeStyle = `rgba(123, 44, 191, ${opacity})`
+            ctx.lineWidth = 0.5
+            ctx.stroke()
+          }
+        }
       }
     }
 
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
-      
+      ctx.fillStyle = 'rgba(10, 10, 15, 0.1)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
       particles.forEach(particle => {
         particle.update()
         particle.draw()
       })
-      
-      animationFrameId = requestAnimationFrame(animate)
+
+      drawConnections()
+      animationId = requestAnimationFrame(animate)
     }
 
+    resize()
     init()
     animate()
 
-    window.addEventListener('resize', resize)
+    window.addEventListener('resize', () => {
+      resize()
+      init()
+    })
 
     return () => {
+      cancelAnimationFrame(animationId)
       window.removeEventListener('resize', resize)
-      cancelAnimationFrame(animationFrameId)
     }
   }, [])
 
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0"
-      style={{ opacity: 0.6 }}
+      className="particle-canvas"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        pointerEvents: 'none',
+        zIndex: 0
+      }}
     />
   )
 }
