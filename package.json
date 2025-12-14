@@ -1,20 +1,23 @@
 {
-  "name": "upside-down-gaming",
+  "name": "stranger-games",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "A gothic gaming webapp for long-distance best friends - Stranger Things meets Wednesday Addams",
+  "description": "Real-time multiplayer games for long-distance best friends - Stranger Things themed",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "peerjs": "^1.5.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.2.1",
     "vite": "^5.0.8"
-  }
+  },
+  "homepage": "./"
 }
