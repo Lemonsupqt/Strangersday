@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
-      /* Critical CSS for loading state */
       body {
         margin: 0;
         background: #0a0a0f;
@@ -17,34 +16,72 @@
         font-family: 'Inter', system-ui, sans-serif;
         min-height: 100vh;
       }
-      #root:empty {
+      .loading-screen {
         display: flex;
         align-items: center;
         justify-content: center;
         min-height: 100vh;
         flex-direction: column;
       }
-      #root:empty::before {
-        content: '🌀';
+      .loading-screen .spinner {
         font-size: 4rem;
         animation: spin 2s linear infinite;
       }
-      #root:empty::after {
-        content: 'Entering the Upside Down...';
+      .loading-screen .text {
         margin-top: 1rem;
         color: #ff6b9d;
         font-family: 'Cinzel', serif;
+      }
+      .loading-screen .debug {
+        margin-top: 2rem;
+        color: #6b7280;
+        font-size: 0.75rem;
+        text-align: center;
       }
       @keyframes spin {
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
       }
+      .hidden { display: none !important; }
     </style>
   </head>
   <body>
+    <div id="loading" class="loading-screen">
+      <div class="spinner">🌀</div>
+      <div class="text">Entering the Upside Down...</div>
+      <div class="debug" id="debug-info">Loading assets...</div>
+    </div>
     <div id="root"></div>
-    <!-- Handle SPA redirect from 404.html for GitHub Pages -->
+    
     <script>
+      // Debug: Track loading progress
+      var debugEl = document.getElementById('debug-info');
+      var loadingEl = document.getElementById('loading');
+      
+      function updateDebug(msg) {
+        if (debugEl) debugEl.textContent = msg;
+        console.log('[Debug]', msg);
+      }
+      
+      // Hide loading screen when React renders
+      var checkRoot = setInterval(function() {
+        var root = document.getElementById('root');
+        if (root && root.children.length > 0) {
+          clearInterval(checkRoot);
+          loadingEl.classList.add('hidden');
+        }
+      }, 100);
+      
+      // Timeout fallback - if still loading after 10s, show error
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        if (!root || root.children.length === 0) {
+          updateDebug('Loading timed out. Check console for errors.');
+          loadingEl.innerHTML = '<div style="text-align:center;padding:2rem;"><div style="font-size:3rem;">💀</div><div style="color:#ff0844;font-size:1.5rem;margin:1rem 0;">Failed to load</div><div style="color:#6b7280;max-width:300px;">The JavaScript failed to load. Try refreshing or check your connection.</div><button onclick="location.reload()" style="margin-top:1.5rem;padding:12px 32px;background:linear-gradient(135deg,#ff0844,#7b2cbf);border:none;border-radius:8px;color:white;cursor:pointer;font-size:1rem;">🔄 Retry</button></div>';
+        }
+      }, 10000);
+      
+      // Handle SPA redirect from 404.html
       (function(){
         var redirect = sessionStorage.redirect;
         delete sessionStorage.redirect;
@@ -52,18 +89,16 @@
           history.replaceState(null, null, redirect);
         }
       })();
-    </script>
-    <script type="module" src="./src/main.jsx"></script>
-    <script>
-      // Fallback error handler
+      
+      updateDebug('HTML loaded, waiting for JS module...');
+      
+      // Global error handler
       window.onerror = function(msg, url, line, col, error) {
-        console.error('Global error:', msg, url, line, col, error);
-        var root = document.getElementById('root');
-        if (root && root.innerHTML === '') {
-          root.innerHTML = '<div style="text-align:center;padding:2rem;"><h1 style="font-size:3rem;">🌀</h1><h2 style="color:#ff0844;">Portal Error</h2><p style="color:#6b7280;">Something went wrong loading the app.</p><p style="color:#6b7280;font-size:0.8rem;">' + msg + '</p><button onclick="location.reload()" style="margin-top:1rem;padding:12px 24px;background:linear-gradient(135deg,#ff0844,#7b2cbf);border:none;border-radius:8px;color:white;cursor:pointer;">Retry</button></div>';
-        }
+        console.error('Error:', msg, url, line);
+        updateDebug('Error: ' + msg);
         return false;
       };
     </script>
+    <script type="module" src="./src/main.jsx" onload="updateDebug('Module loaded!')" onerror="updateDebug('Failed to load module!')"></script>
   </body>
 </html>
