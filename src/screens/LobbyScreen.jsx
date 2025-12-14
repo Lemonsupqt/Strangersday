@@ -31,54 +31,70 @@ const LobbyScreen = () => {
   const getStatusMessage = () => {
     switch (connectionStatus) {
       case 'connecting':
-        return 'Opening portal to the Upside Down...'
+        return 'The spirits are searching...'
       case 'connected':
-        return 'Portal established! 🌀'
+        return 'Soul Link Established! 🌙'
       case 'error':
-        return error || 'Something went wrong in the void...'
+        return error || 'The void rejected the connection...'
       default:
-        return 'Waiting for a friend from the other side...'
+        return 'Awaiting your kindred spirit...'
+    }
+  }
+
+  const getStatusIcon = () => {
+    switch (connectionStatus) {
+      case 'connecting': return '🔮'
+      case 'connected': return '✨'
+      case 'error': return '💀'
+      default: return '👻'
     }
   }
 
   return (
     <div className="lobby-screen">
       <div className="lobby-container">
+        {/* Player Card with Gothic Theme */}
         <div className="player-card">
           <div className="player-avatar">
             <div className="avatar-glow"></div>
             <span className="avatar-initial">{playerName?.[0]?.toUpperCase()}</span>
           </div>
           <h3 className="player-name">{playerName}</h3>
+          <div className="player-title">Seeker of the Void</div>
           <div className={`status-badge ${connectionStatus}`}>
+            <span className="status-icon">{getStatusIcon()}</span>
             <span className="status-dot"></span>
             <span className="status-text">{getStatusMessage()}</span>
           </div>
         </div>
 
         <div className="connection-panel">
+          {/* Your Code Section */}
           <div className="room-code-section">
             <h4 className="section-title">
-              <span className="title-icon">📡</span>
-              Your Portal Code
+              <span className="title-icon">🦇</span>
+              Your Soul Beacon
             </h4>
             <div className="code-display" onClick={copyCode}>
               <span className="code-text">{peerId || '...'}</span>
               <button className={`copy-btn ${copied ? 'copied' : ''}`}>
-                {copied ? '✓ Copied!' : '📋 Copy'}
+                {copied ? '✓ Summoned!' : '📜 Copy'}
               </button>
             </div>
-            <p className="code-hint">Share this code with your BFF!</p>
+            <p className="code-hint">Send this arcane code to your BFF from the other realm!</p>
           </div>
 
           <div className="divider">
+            <span className="divider-icon">⚰️</span>
             <span className="divider-text">OR</span>
+            <span className="divider-icon">⚰️</span>
           </div>
 
+          {/* Join Section */}
           <div className="join-section">
             <h4 className="section-title">
               <span className="title-icon">🔮</span>
-              Join Friend's Portal
+              Join Their Séance
             </h4>
             
             {!showJoin ? (
@@ -86,7 +102,7 @@ const LobbyScreen = () => {
                 className="show-join-btn"
                 onClick={() => setShowJoin(true)}
               >
-                Enter Friend's Code
+                <span>🖤</span> Enter Friend's Code <span>🖤</span>
               </button>
             ) : (
               <form onSubmit={handleConnect} className="join-form">
@@ -94,7 +110,7 @@ const LobbyScreen = () => {
                   type="text"
                   value={friendCode}
                   onChange={(e) => setFriendCode(e.target.value.toUpperCase())}
-                  placeholder="FRIEND-CODE"
+                  placeholder="SOUL-CODE..."
                   className="friend-code-input"
                   autoFocus
                 />
@@ -106,7 +122,7 @@ const LobbyScreen = () => {
                   {connectionStatus === 'connecting' ? (
                     <span className="loading-spinner"></span>
                   ) : (
-                    'Connect'
+                    '🌙 Summon'
                   )}
                 </button>
               </form>
@@ -114,7 +130,7 @@ const LobbyScreen = () => {
           </div>
         </div>
 
-        {/* Connection animation */}
+        {/* Mystical Portal Animation */}
         <div className="portal-animation">
           <div className="portal-ring ring-1"></div>
           <div className="portal-ring ring-2"></div>
@@ -122,16 +138,22 @@ const LobbyScreen = () => {
           {connectionStatus === 'connecting' && (
             <div className="portal-energy"></div>
           )}
+          <span className="portal-center-icon">
+            {connectionStatus === 'connecting' ? '🌀' : '🕯️'}
+          </span>
         </div>
 
-        {/* Tips */}
+        {/* Gothic Tips */}
         <div className="lobby-tips">
-          <h5>💡 How to connect:</h5>
+          <h5>📜 The Ritual of Connection:</h5>
           <ol>
-            <li>Share your Portal Code with your friend</li>
-            <li>OR enter their code to join their portal</li>
-            <li>Once connected, choose a game to play!</li>
+            <li>🦇 Share your Soul Beacon with your friend</li>
+            <li>🔮 OR enter their code to join their realm</li>
+            <li>⚡ Once linked, choose your game of darkness!</li>
           </ol>
+          <div className="tips-quote">
+            <em>"I'm not perky... I'm just mildly enthusiastic about chaos."</em>
+          </div>
         </div>
       </div>
     </div>
