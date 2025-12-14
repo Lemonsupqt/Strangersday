@@ -10,7 +10,8 @@ export default defineConfig({
     host: true
   },
   build: {
-    outDir: 'dist',
+    // Output to 'docs' folder for GitHub Pages deployment from main branch
+    outDir: 'docs',
     assetsDir: 'assets'
   }
 })
