@@ -1,42 +1,203 @@
-#root {
-  max-width: 1280px;
+.app {
+  min-height: 100vh;
+  padding: 28px 18px;
+}
+
+.frame {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 920px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+.panel {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.h {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin: 0 0 10px 0;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+input, textarea {
+  width: 100%;
+  background: rgba(10, 10, 15, 0.35);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+}
+
+textarea { resize: vertical; min-height: 90px; }
+
+.small {
+  font-size: 12px;
+  color: var(--dim);
+}
+
+button {
+  background: rgba(152, 166, 255, 0.12);
+  border: 1px solid rgba(152, 166, 255, 0.25);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: rgba(152, 166, 255, 0.18);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btnDanger {
+  background: rgba(255, 123, 136, 0.10);
+  border-color: rgba(255, 123, 136, 0.22);
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(0,0,0,0.18);
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+}
+
+.log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logLine {
+  border-left: 2px solid rgba(245,245,255,0.12);
+  padding-left: 10px;
+  color: rgba(245,245,255,0.82);
+}
+
+.sceneBoard {
+  position: relative;
+  height: 320px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(900px 340px at 40% 10%, rgba(152,166,255,0.10), rgba(0,0,0,0.0)),
+    radial-gradient(520px 520px at 80% 65%, rgba(255,123,136,0.06), rgba(0,0,0,0.0)),
+    linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.10));
+  overflow: hidden;
+}
+
+.noise {
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,0.03),
+      rgba(255,255,255,0.03) 1px,
+      rgba(0,0,0,0) 1px,
+      rgba(0,0,0,0) 3px
+    );
+  mix-blend-mode: overlay;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.obj {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 999px;
+  border: 1px solid rgba(245,245,255,0.16);
+  background: rgba(255,255,255,0.02);
+  display: grid;
+  place-items: center;
+  color: rgba(245,245,255,0.75);
   text-align: center;
+  padding: 10px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.objFocus {
+  border-color: rgba(152,166,255,0.55);
+  box-shadow: 0 0 0 3px rgba(152,166,255,0.12);
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.mark {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.markW {
+  background: rgba(152,166,255,0.85);
 }
 
-.card {
-  padding: 2em;
+.markD {
+  background: rgba(255,123,136,0.75);
 }
 
-.read-the-docs {
-  color: #888;
+.hr {
+  height: 1px;
+  background: var(--line);
+  margin: 12px 0;
 }

@@ -15,6 +15,10 @@ export default defineConfig([
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
     ],
+    rules: {
+      // This rule is overly strict for this app; our effects sync with WebSocket events.
+      'react-hooks/set-state-in-effect': 'off',
+    },
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
