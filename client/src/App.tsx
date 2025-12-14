@@ -95,7 +95,7 @@ export default function App() {
   const stage = state?.stage ?? 'LOBBY'
   const scene = state?.scene
   const myRole = role
-  const myComms = myRole && scene ? scene.comms[myRole] : null
+  const comms = scene ? scene.comms : null
 
   const secondsLeft = scene ? Math.max(0, Math.ceil((scene.endsAt - now) / 1000)) : 0
 
@@ -302,20 +302,21 @@ export default function App() {
                 <div className="hr" />
 
                 <div className="h">Comms (constrained)</div>
+                <div className="small">Shared budget per scene. Coordinate silence.</div>
                 <div className="row">
-                  <button onClick={onTap} disabled={!connected || !myComms || myComms.tapsLeft <= 0}>
-                    Tap ({myComms?.tapsLeft ?? 0})
+                  <button onClick={onTap} disabled={!connected || !comms || comms.tapsLeft <= 0}>
+                    Tap ({comms?.tapsLeft ?? 0})
                   </button>
                 </div>
 
                 <div style={{ marginTop: 10 }}>
-                  <div className="small">Cards ({myComms?.cardsLeft ?? 0} left)</div>
+                  <div className="small">Cards ({comms?.cardsLeft ?? 0} left)</div>
                   <div className="log" style={{ marginTop: 8 }}>
                     {scene.cards.map((c) => (
                       <button
                         key={c.id}
                         onClick={() => onPlayCard(c.id)}
-                        disabled={!connected || !myComms || myComms.cardsLeft <= 0}
+                        disabled={!connected || !comms || comms.cardsLeft <= 0}
                         style={{ textAlign: 'left' }}
                       >
                         {c.text}
@@ -325,8 +326,8 @@ export default function App() {
                 </div>
 
                 <FreeText
-                  disabled={!connected || !myComms || myComms.freeTextLeft <= 0}
-                  remaining={myComms?.freeTextLeft ?? 0}
+                  disabled={!connected || !comms || comms.freeTextLeft <= 0}
+                  remaining={comms?.freeTextLeft ?? 0}
                   onSend={onFreeText}
                 />
               </>

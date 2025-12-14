@@ -42,7 +42,8 @@ export type SceneState = {
   witnessText: string
   diverText: string
   threat: number
-  comms: Record<Role, { tapsLeft: number; cardsLeft: number; freeTextLeft: number }>
+  // Shared per-scene budget (forces restraint + coordination).
+  comms: { tapsLeft: number; cardsLeft: number; freeTextLeft: number }
   cards: Card[]
   marks: Array<{ by: Role; id: string; x: number; y: number; label?: string }>
   looks: Partial<Record<Role, string>>

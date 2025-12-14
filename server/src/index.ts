@@ -143,10 +143,8 @@ function startScene(room: Room) {
     witnessText: def.witnessText,
     diverText: def.diverText,
     threat: 0,
-    comms: {
-      WITNESS: { tapsLeft: 3, cardsLeft: 2, freeTextLeft: 1 },
-      DIVER: { tapsLeft: 3, cardsLeft: 2, freeTextLeft: 1 },
-    },
+    // Shared budget: if either of you speaks, the room learns faster.
+    comms: { tapsLeft: 2, cardsLeft: 1, freeTextLeft: 1 },
     cards: pickCards(profile),
     marks: [],
     looks: {},
@@ -247,17 +245,16 @@ function handleAutopsy(room: Room, player: PlayerConn, promptId: string, text: s
   }
 }
 
-function onComms(room: Room, role: Role, kind: 'tap' | 'card' | 'freeText') {
+function onComms(room: Room, kind: 'tap' | 'card' | 'freeText') {
   if (!room.scene) return
 
-  const c = room.scene.comms[role]
-  if (!c) return
-  if (kind === 'tap') c.tapsLeft = Math.max(0, c.tapsLeft - 1)
-  if (kind === 'card') c.cardsLeft = Math.max(0, c.cardsLeft - 1)
-  if (kind === 'freeText') c.freeTextLeft = Math.max(0, c.freeTextLeft - 1)
+  if (kind === 'tap') room.scene.comms.tapsLeft = Math.max(0, room.scene.comms.tapsLeft - 1)
+  if (kind === 'card') room.scene.comms.cardsLeft = Math.max(0, room.scene.comms.cardsLeft - 1)
+  if (kind === 'freeText') room.scene.comms.freeTextLeft = Math.max(0, room.scene.comms.freeTextLeft - 1)
 
   // speaking increases threat
-  const inc = kind === 'freeText' ? 1.1 : kind === 'card' ? 0.6 : 0.35
+  // Make comms feel expensive; the optimal play is often silence + observation.
+  const inc = kind === 'freeText' ? 2.6 : kind === 'card' ? 1.2 : 0.6
   room.scene.threat += inc
 }
 
@@ -413,8 +410,8 @@ wss.on('connection', (ws) => {
       case 'tap': {
         if (!room?.scene || room.stage !== 'IN_SCENE') return
         if (!player.role) return
-        if (room.scene.comms[player.role].tapsLeft <= 0) return
-        onComms(room, player.role, 'tap')
+        if (room.scene.comms.tapsLeft <= 0) return
+        onComms(room, 'tap')
         log(room, `${player.role ?? 'Someone'} tapped.`)
         return
       }
@@ -422,10 +419,10 @@ wss.on('connection', (ws) => {
       case 'play_card': {
         if (!room?.scene || room.stage !== 'IN_SCENE') return
         if (!player.role) return
-        if (room.scene.comms[player.role].cardsLeft <= 0) return
+        if (room.scene.comms.cardsLeft <= 0) return
         const card = room.scene.cards.find((c) => c.id === msg.cardId)
         if (!card) return
-        onComms(room, player.role, 'card')
+        onComms(room, 'card')
         log(room, card.text)
         return
       }
@@ -433,10 +430,10 @@ wss.on('connection', (ws) => {
       case 'free_text': {
         if (!room?.scene || room.stage !== 'IN_SCENE') return
         if (!player.role) return
-        if (room.scene.comms[player.role].freeTextLeft <= 0) return
+        if (room.scene.comms.freeTextLeft <= 0) return
         const text = msg.text.trim().slice(0, 60)
         if (!text) return
-        onComms(room, player.role, 'freeText')
+        onComms(room, 'freeText')
         log(room, text)
         return
       }
