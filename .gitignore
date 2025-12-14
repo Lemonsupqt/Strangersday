@@ -1,0 +1,17 @@
+# OS / crash dumps
+core
+core.*
+
+# Node
+node_modules/
+
+# Builds
+client/dist/
+server/dist/
+
+# Env
+.env
+.env.*
+
+# Logs
+*.log
