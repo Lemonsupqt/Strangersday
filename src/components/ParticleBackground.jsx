@@ -1,11 +1,25 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 const ParticleBackground = () => {
   const canvasRef = useRef(null)
+  const [isSupported, setIsSupported] = useState(true)
 
   useEffect(() => {
     const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
+    if (!canvas) return
+
+    let ctx
+    try {
+      ctx = canvas.getContext('2d')
+      if (!ctx) {
+        setIsSupported(false)
+        return
+      }
+    } catch (e) {
+      setIsSupported(false)
+      return
+    }
+
     let animationFrameId
     let particles = []
 
@@ -77,7 +91,8 @@ const ParticleBackground = () => {
     const init = () => {
       resize()
       particles = []
-      for (let i = 0; i < 50; i++) {
+      const particleCount = Math.min(50, Math.floor(window.innerWidth / 30))
+      for (let i = 0; i < particleCount; i++) {
         const p = new Particle()
         p.y = Math.random() * canvas.height // Spread initial particles
         particles.push(p)
@@ -95,16 +110,27 @@ const ParticleBackground = () => {
       animationFrameId = requestAnimationFrame(animate)
     }
 
-    init()
-    animate()
+    try {
+      init()
+      animate()
+    } catch (e) {
+      console.error('Particle animation error:', e)
+      setIsSupported(false)
+    }
 
     window.addEventListener('resize', resize)
 
     return () => {
       window.removeEventListener('resize', resize)
-      cancelAnimationFrame(animationFrameId)
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId)
+      }
     }
   }, [])
+
+  if (!isSupported) {
+    return null
+  }
 
   return (
     <canvas

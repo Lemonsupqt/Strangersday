@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-export default defineConfig({
+// Get the repo name from package.json or environment
+// For GitHub Pages: https://username.github.io/repo-name/
+export default defineConfig(({ command }) => ({
   plugins: [react()],
-  // Use relative paths for GitHub Pages compatibility
+  // Use './' for relative paths - works for GitHub Pages
   base: './',
   server: {
     port: 3000,
@@ -12,7 +14,9 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    // Ensure relative paths in built files
+    // Generate sourcemaps for debugging
+    sourcemap: false,
+    // Ensure assets use relative paths
     rollupOptions: {
       output: {
         assetFileNames: 'assets/[name]-[hash][extname]',
@@ -21,4 +25,4 @@ export default defineConfig({
       }
     }
   }
-})
+}))

@@ -8,7 +8,39 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/index-DZxaGS9F.js"></script>
+    <style>
+      /* Critical CSS for loading state */
+      body {
+        margin: 0;
+        background: #0a0a0f;
+        color: #e8e8e8;
+        font-family: 'Inter', system-ui, sans-serif;
+        min-height: 100vh;
+      }
+      #root:empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+      #root:empty::before {
+        content: '🌀';
+        font-size: 4rem;
+        animation: spin 2s linear infinite;
+      }
+      #root:empty::after {
+        content: 'Entering the Upside Down...';
+        margin-top: 1rem;
+        color: #ff6b9d;
+        font-family: 'Cinzel', serif;
+      }
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-QLgx4Uyf.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-B1oW_-rx.css">
   </head>
   <body>
@@ -22,6 +54,17 @@
           history.replaceState(null, null, redirect);
         }
       })();
+    </script>
+    <script>
+      // Fallback error handler
+      window.onerror = function(msg, url, line, col, error) {
+        console.error('Global error:', msg, url, line, col, error);
+        var root = document.getElementById('root');
+        if (root && root.innerHTML === '') {
+          root.innerHTML = '<div style="text-align:center;padding:2rem;"><h1 style="font-size:3rem;">🌀</h1><h2 style="color:#ff0844;">Portal Error</h2><p style="color:#6b7280;">Something went wrong loading the app.</p><p style="color:#6b7280;font-size:0.8rem;">' + msg + '</p><button onclick="location.reload()" style="margin-top:1rem;padding:12px 24px;background:linear-gradient(135deg,#ff0844,#7b2cbf);border:none;border-radius:8px;color:white;cursor:pointer;">Retry</button></div>';
+        }
+        return false;
+      };
     </script>
   </body>
 </html>
